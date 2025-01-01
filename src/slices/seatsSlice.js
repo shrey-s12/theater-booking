@@ -1,51 +1,106 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+const seats = [
+    [
+        { seatStatus: "available", category: "Platinum" }, // seatStatus can be "available", "booked", "selected"
+        { seatStatus: "available", category: "Platinum" },
+        { seatStatus: "available", category: "Platinum" },
+        { seatStatus: "available", category: "Platinum" },
+        { seatStatus: "available", category: "Platinum" },
+        { seatStatus: "available", category: "Platinum" },
+        { seatStatus: "available", category: "Platinum" },
+        { seatStatus: "available", category: "Platinum" },
+        { seatStatus: "available", category: "Platinum" },
+        { seatStatus: "available", category: "Platinum" }
+    ],
+    [
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" },
+        { seatStatus: "available", category: "Classic" }
+    ],
+    [
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" },
+        { seatStatus: "available", category: "gold" }
+    ]
+]
+
 const initialState = {
-  seatingData: [
-    {
-      category: 'Platinum',
-      price: 300,
-      seats: Array.from({ length: 10 }, (_, i) => `P${i + 1}`),
-    },
-    {
-      category: 'Gold',
-      price: 200,
-      seats: Array.from({ length: 20 }, (_, i) => `G${i + 1}`),
-    },
-    {
-      category: 'Silver',
-      price: 100,
-      seats: Array.from({ length: 20 }, (_, i) => `S${i + 1}`),
-    },
-  ],
-  selectedSeats: [],
-  bookedSeats: JSON.parse(localStorage.getItem('bookedSeats')) || [],
+    seats: seats,
+    selectedSeats: [],
 };
 
 const seatsSlice = createSlice({
-  name: 'seatsNameInSlice',
-  initialState,
-  reducers: {
-    selectSeat: (state, action) => {
-      if (!state.bookedSeats.includes(action.payload.seat)) {
-        state.selectedSeats.push(action.payload);
-      }
+    name: 'seatsNameInKey',
+    initialState,
+    reducers: {
+        seatSelection: (state, action) => {
+            const { seat, category, index } = action.payload;
+            const selectedSeat = { seat, category };
+            if (category === "Platinum") {
+                const statusChange = state.seats[0][index - 1].seatStatus === "available" ? "selected" : "available";
+                state.seats[0][index - 1].seatStatus = statusChange;
+            } else if (category === "Classic") {
+                const statusChange = state.seats[1][index - 1].seatStatus === "available" ? "selected" : "available";
+                state.seats[1][index - 1].seatStatus = statusChange;
+            } else {
+                const statusChange = state.seats[2][index - 1].seatStatus === "available" ? "selected" : "available";
+                state.seats[2][index - 1].seatStatus = statusChange;
+            }
+            console.log(initialState.seats)
+            console.log(state.seats);
+            console.log("seat", seat, "category", category, "index", index);
+            state.selectedSeats.push(selectedSeat);
+
+        },
     },
-    deselectSeat: (state, action) => {
-      state.selectedSeats = state.selectedSeats.filter(
-        (seat) => seat.seat !== action.payload.seat
-      );
-    },
-    confirmBooking: (state) => {
-      state.bookedSeats = [
-        ...state.bookedSeats,
-        ...state.selectedSeats.map((seat) => seat.seat),
-      ];
-      state.selectedSeats = [];
-      localStorage.setItem('bookedSeats', JSON.stringify(state.bookedSeats));
-    },
-  },
 });
 
-export const { selectSeat, deselectSeat, confirmBooking } = seatsSlice.actions;
+export const { seatSelection } = seatsSlice.actions;
 export default seatsSlice.reducer;
+
+export const selectSeats = state => state.seatsKeyInStore.seats;
